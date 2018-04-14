@@ -1,6 +1,7 @@
 package br.com.apisys.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,8 @@ public class Curso {
 
     private String instituicaoEnsino;
 
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonBackReference
 //    @PrimaryKeyJoinColumn
     @OneToOne(mappedBy = "curso", cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
     private Aluno alunos;

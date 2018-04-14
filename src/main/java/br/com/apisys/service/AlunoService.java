@@ -45,14 +45,10 @@ public class AlunoService {
      * @return dados do Aluno
      */
     @GetMapping("/aluno/{id}")
-    public Aluno retrieveAluno(@PathVariable long id) {
-        Optional<Aluno> aluno = this.alunoRepository.findById(id);
+    public ResponseEntity<Aluno> retrieveAluno(@PathVariable long id) {
+        Optional<Aluno> databaseAluno = this.alunoRepository.findById(id);
 
-        if (!aluno.isPresent()) {
-            throw new ResourceNotFoundException();
-        }
-
-        return aluno.get();
+        return databaseAluno.map(aluno -> new ResponseEntity<>(aluno, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -66,7 +62,7 @@ public class AlunoService {
             this.alunoRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Aluno excluído com sucesso!"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Erro ao criar o Aluno: " + e.getLocalizedMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Erro ao excluir o Aluno: " + e.getLocalizedMessage()));
         }
     }
 
@@ -83,7 +79,7 @@ public class AlunoService {
             this.alunoRepository.save(aluno);
             return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Aluno criado com sucesso!"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Erro ao criar o Aluno: " + e.getLocalizedMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Erro ao criar o Aluno: " + e.getLocalizedMessage()));
         }
     }
 
@@ -101,11 +97,12 @@ public class AlunoService {
         Optional<Aluno> alunoOptional = this.alunoRepository.findById(id);
 
         if (!alunoOptional.isPresent())
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body("Aluno não encontrado!");
 
         aluno.setId(id);
         this.alunoRepository.save(aluno);
 //        return ResponseEntity.noContent().build();
+
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Aluno Atualizado com Sucesso!");
     }
 
@@ -115,6 +112,5 @@ public class AlunoService {
         jsonObject.addProperty("response", body);
         return gson.toJson(jsonObject);
     }
-
 
 }

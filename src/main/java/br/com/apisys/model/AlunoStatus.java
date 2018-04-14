@@ -1,7 +1,7 @@
 package br.com.apisys.model;
 
 public enum AlunoStatus {
-    MATRICULADO("Matriculado"),
+    MATRICULADO("MATRICULADO"),
     TRANCADO("TRANCADO"),
     JUBILADO("JUBILADO");
 
