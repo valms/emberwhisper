@@ -96,12 +96,12 @@ public class AlunoService {
         Optional<Aluno> alunoOptional = this.alunoRepository.findById(id);
 
         if (!alunoOptional.isPresent())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body("Aluno não encontrado!");
+            return new ResponseEntity<>(this.buildResponse("Aluno de id " + id + " não foi localizado"), HttpStatus.NOT_FOUND);
 
         aluno.setId(id);
         this.alunoRepository.save(aluno);
 
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Aluno Atualizado com Sucesso!");
+        return new ResponseEntity<>(this.buildResponse("Aluno atualizado com sucesso!"), HttpStatus.OK);
     }
 
     private Object buildResponse(String body) {
