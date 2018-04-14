@@ -100,7 +100,6 @@ public class AlunoService {
 
         aluno.setId(id);
         this.alunoRepository.save(aluno);
-//        return ResponseEntity.noContent().build();
 
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Aluno Atualizado com Sucesso!");
     }
