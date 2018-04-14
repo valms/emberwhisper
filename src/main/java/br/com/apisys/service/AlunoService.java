@@ -1,6 +1,5 @@
 package br.com.apisys.service;
 
-import br.com.apisys.exception.ResourceNotFoundException;
 import br.com.apisys.model.Aluno;
 import br.com.apisys.repository.AlunoRepository;
 import com.google.gson.Gson;
