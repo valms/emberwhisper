@@ -2,15 +2,15 @@ package br.com.apisys.service;
 
 import br.com.apisys.exception.ResourceNotFoundException;
 import br.com.apisys.model.Aluno;
-import br.com.apisys.model.Curso;
 import br.com.apisys.repository.AlunoRepository;
-import br.com.apisys.repository.CursoRepository;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -61,8 +61,13 @@ public class AlunoService {
      * @param id ID do aluno a ser apagado
      */
     @DeleteMapping("/aluno/{id}")
-    public void deleteAluno(@PathVariable long id) {
-        this.alunoRepository.deleteById(id);
+    public ResponseEntity<Object> deleteAluno(@PathVariable long id) {
+        try {
+            this.alunoRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Aluno excluído com sucesso!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Erro ao criar o Aluno: " + e.getLocalizedMessage()));
+        }
     }
 
 
@@ -74,13 +79,12 @@ public class AlunoService {
      */
     @PostMapping("/aluno")
     public ResponseEntity<Object> createAluno(@RequestBody Aluno aluno) {
-
-        Aluno auxAluno = this.alunoRepository.save(aluno);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(auxAluno.getId()).toUri();
-
-        return ResponseEntity.created(uri).build();
+        try {
+            this.alunoRepository.save(aluno);
+            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Aluno criado com sucesso!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(this.buildResponse("Erro ao criar o Aluno: " + e.getLocalizedMessage()));
+        }
     }
 
 
@@ -101,7 +105,15 @@ public class AlunoService {
 
         aluno.setId(id);
         this.alunoRepository.save(aluno);
-        return ResponseEntity.noContent().build();
+//        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Aluno Atualizado com Sucesso!");
+    }
+
+    private Object buildResponse(String body) {
+        JsonObject jsonObject = new JsonObject();
+        Gson gson = new Gson();
+        jsonObject.addProperty("response", body);
+        return gson.toJson(jsonObject);
     }
 
 
